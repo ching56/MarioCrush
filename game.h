@@ -4,6 +4,10 @@
 #include <QWidget>
 #include "stone.h"
 #include "result.h"
+#include "stone1.h"
+#include "stone2.h"
+#include "stone3.h"
+#include "stone4.h"
 
 namespace Ui {
 class game;
@@ -19,7 +23,12 @@ public:
 
 private:
     Ui::game *ui;
-    stone st[8][12];
+    stone *st[8][11];
+    int score;
+    int star;
+    int move;
+private slots:
+    void stone_clicked();
 };
 
 #endif // GAME_H

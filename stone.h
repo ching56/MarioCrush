@@ -3,14 +3,21 @@
 
 #include <QObject>
 #include <QPushButton>
-class stone : public QWidget
+#include <QLabel>
+class stone : public QObject
 {
     Q_OBJECT
 public:
-    stone();
-private:
-    QPushButton button;
-
+    stone(QWidget *parent, int row, int col);
+signals:
+    void click();
+protected:
+    QPushButton *button;
+    QLabel *bg;
+    bool isClicked;
+    virtual void crush();
+protected slots:
+    void button_clicked();
 };
 
 #endif // STONE_H
