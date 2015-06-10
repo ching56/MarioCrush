@@ -29,6 +29,7 @@ private:
     int move;
     bool checkCrush();
     void refresh();
+    void fillRandStone();
     stone* randStone(int row, int col);
 private slots:
     void stone_clicked();

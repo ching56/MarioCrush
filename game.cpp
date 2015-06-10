@@ -286,7 +286,6 @@ void game::refresh()
 
             qDebug()<<i<<j;
 
-        //BUGGGGG HERE!!(need operator overloading)
         for(int k=j;k>-1;k--){
             if(st[i][k]!=NULL && st[i][k+1]==NULL){
                 qDebug()<<"should be..."<<i<<k;
@@ -298,6 +297,19 @@ void game::refresh()
         }
         }
     }
+}
+
+void game::fillRandStone()
+{
+    for(int j=0;j<11;j++)
+        for(int i=0;i<8;i++)
+            if(st[i][j]==NULL){
+                st[i][j] = randStone(i,j);
+                qDebug()<<"FILL";
+            }
+    for(int i=0;i<11;i++)
+        for(int j=0;j<8;j++)
+            connect(st[j][i],SIGNAL(click()),this,SLOT(stone_clicked()));
 }
 
 stone *game::randStone(int row ,int col)
@@ -320,7 +332,8 @@ stone *game::randStone(int row ,int col)
         ptr = new stone4(this,row,col);
         break;
     }
-
+    qDebug()<<"stone gen!";
+    ptr->button->show();
     return ptr;
 }
 
@@ -363,12 +376,9 @@ void game::stone_clicked()
 
         if(checkCrush()/*exchange and crush*/){
         //(move)
-            qDebug()<<"end";
-          //  for(int j=11;j>-1;j--)
-            //for(int i=8;i>-1;i--)
-              //  qDebug()<<i<<j<<(st[i][j])
             refresh();
-            qDebug()<<"out!";
+            qDebug()<<"refresh";
+            fillRandStone();
         //make stone in proper position
         //(move)
         //load downward and fill the blank with new stone
@@ -386,13 +396,13 @@ void game::stone_clicked()
 
     }
 
-   //for(int i = 0;i<2;i++)
-     //   st[rec_i[i]][rec_j[i]]->isClicked=false;
+   for(int i = 0;i<2;i++)
+        st[rec_i[i]][rec_j[i]]->isClicked=false;
 
     }
-    /*for(int i=0;i<8;i++)
+    for(int i=0;i<8;i++)
         for(int j=0;j<11;j++){
             if(st[i][j]->isClicked)st[i][j]->bg->show();
             if(!st[i][j]->isClicked)st[i][j]->bg->hide();
-        }*/
+        }
 }
