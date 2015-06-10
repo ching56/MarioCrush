@@ -27,6 +27,9 @@ private:
     int score;
     int star;
     int move;
+    bool checkCrush();
+    void refresh();
+    stone* randStone(int row, int col);
 private slots:
     void stone_clicked();
 };

@@ -5,6 +5,6 @@ stone1::stone1(QWidget *parent, int row, int col):stone(parent, row, col){button
 
 void stone1::crush()
 {
-
+    delete this;
 }
 

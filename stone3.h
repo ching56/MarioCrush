@@ -10,7 +10,6 @@ class stone3 : public stone
         Q_OBJECT
 public:
     stone3(QWidget *parent, int row, int col);
-private:
     void crush();
 };
 
