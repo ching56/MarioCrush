@@ -275,11 +275,12 @@ bool game::checkCrush()
                 st[i][j] = NULL;
             }
     //reset isMove, isCrush?
+    qDebug()<<"crush!";
     return anyCrush;
 }
 
 void game::refresh()
-{   qDebug()<<"in refresh";
+{   qDebug()<<"refresh";
     for(int j=10;j>-1;j--)
     for(int i=7;i>-1;i--){
         if(st[i][j]==NULL){
@@ -308,8 +309,10 @@ void game::fillRandStone()
                 qDebug()<<"FILL";
             }
     for(int i=0;i<11;i++)
-        for(int j=0;j<8;j++)
+        for(int j=0;j<8;j++){
             connect(st[j][i],SIGNAL(click()),this,SLOT(stone_clicked()));
+            st[j][i]->isMoved = false;
+        }
 }
 
 stone *game::randStone(int row ,int col)
@@ -377,8 +380,11 @@ void game::stone_clicked()
         if(checkCrush()/*exchange and crush*/){
         //(move)
             refresh();
-            qDebug()<<"refresh";
             fillRandStone();
+            while(checkCrush()){
+                refresh();
+                fillRandStone();
+            }
         //make stone in proper position
         //(move)
         //load downward and fill the blank with new stone
