@@ -9,10 +9,8 @@ class stoneR :public stone
 {
     Q_OBJECT
 public:
-    stoneR(QWidget *parent, int row, int col);
+    stoneR(QWidget *parent,int type ,int row, int col);
     void crush();
-signals:
-    void superCrush(int type,int row,int col);
 };
 
 #endif // STONER_H

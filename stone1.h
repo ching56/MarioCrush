@@ -9,7 +9,7 @@ class stone1 :public stone
 {
     Q_OBJECT
 public:
-    stone1(QWidget *parent, int row, int col);
+    stone1(QWidget *parent,int type ,int row, int col);
     void crush();
 };
 

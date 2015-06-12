@@ -11,8 +11,6 @@ class stoneS : public stone
 public:
     stoneS(QWidget *parent, int row, int col);
     void crush();
-signals:
-    void superCrush(int type,int row,int col);
 };
 
 #endif // STONES_H

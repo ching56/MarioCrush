@@ -1,7 +1,7 @@
 #include "stonec.h"
 
 
-stoneC::stoneC(QWidget *parent, int row, int col):stone(parent, row, col){button->setText(C);}
+stoneC::stoneC(QWidget *parent,int type ,int row, int col):stone(parent, row, col){button->setText(QString::number(type));}
 
 void stoneC::crush()
 {

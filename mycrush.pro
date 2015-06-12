@@ -18,30 +18,20 @@ SOURCES += main.cpp\
     game.cpp \
     result.cpp \
     stone1.cpp \
-    stone2.cpp \
-    stone3.cpp \
-    stone4.cpp \
     stoner.cpp \
     stonec.cpp \
     stoneb.cpp \
-    stones.cpp \
-    stoneb1.cpp \
-    stoneb2.cpp
+    stones.cpp
 
 HEADERS  += startscreen.h \
     stone.h \
     game.h \
     result.h \
     stone1.h \
-    stone2.h \
-    stone3.h \
-    stone4.h \
     stoner.h \
     stonec.h \
     stoneb.h \
-    stones.h \
-    stoneb1.h \
-    stoneb2.h
+    stones.h
 
 FORMS    += startscreen.ui \
     game.ui \

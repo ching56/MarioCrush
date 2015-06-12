@@ -7,7 +7,7 @@
 game::game(QWidget *parent,result *res) :
     QWidget(parent),
     ui(new Ui::game),
-    score(0),star(0),move(0)
+    score(0),star(0),move(0),starCrushType(0)
 {
     srandom(time(NULL));
     ui->setupUi(this);
@@ -54,7 +54,7 @@ game::game(QWidget *parent,result *res) :
     for(int i=0;i<11;i++)
         for(int j=0;j<8;j++){
             connect(st[j][i],SIGNAL(click()),this,SLOT(stone_clicked()));
-            connect(st[i][j],SIGNAL(superCrush(int type,int row,int col)),this,SLOT(superCrush(int index,int row,int col)));
+            connect(st[j][i],SIGNAL(superCrush(int ,int ,int )),this,SLOT(superCrush(int ,int ,int )));
         }
 }
 
@@ -66,12 +66,10 @@ game::~game()
 bool game::checkCrush()
 {
     bool anyCrush = false;
-    std::string type[8][11];
+    QString type[8][11];
     for(int j=0;j<11;j++)
         for(int i=0;i<8;i++){
-            type[i][j] = typeid(*st[i][j]).name();
-            if(type[i][j] == typeid(stoneb).name())
-                type[i][j] = typeid(st)
+            type[i][j] = st[i][j]->button->text();
         }
     //check row in 3
     for(int j=0;j<11;j++)
@@ -276,16 +274,31 @@ bool game::checkCrush()
             }
     }
     int makeList[8][11];
+    int listType[8][11];
     //record
     for(int j=0;j<11;j++)
         for(int i=0;i<8;i++){
             makeList[i][j]=0;
             if(st[i][j]->isCrush && st[i][j]->crushNum != 3 && st[i][j]->isMoved)
                 makeList[i][j] = st[i][j]->crushNum;
+                listType[i][j] = st[i][j]->button->text().toInt();
+        }
+    for(int j=0;j<11;j++)
+        for(int i=0;i<8;i++){
+            if(st[i][j]->isMoved && st[i][j]->button->text() == 0){
+                for(int k=0;j<11;j++)
+                    for(int l=0;i<8;i++)
+                        if(st[l][k]->isMoved &&st[l][k]->button->text() != 0){
+                            starCrushType = st[l][k]->button->text().toInt();
+                            st[i][j]->crush();
+                        }
+            }
+
         }
     //crush
     for(int j=0;j<11;j++)
         for(int i=0;i<8;i++)
+            if(st[i][j] != NULL)
             if(st[i][j]->isCrush){
                 st[i][j]->crush();
                 st[i][j] = NULL;
@@ -294,7 +307,7 @@ bool game::checkCrush()
     for(int j=0;j<11;j++)
         for(int i=0;i<8;i++){
             if(makeList[i][j] != 0){
-                    stone[i][j] = genSpecial(makeList[i][j],i,j);
+                    st[i][j] = genSpecial(makeList[i][j],listType[i][j],i,j);
             }
         }
     //reset isMove, isCrush?
@@ -334,7 +347,7 @@ void game::fillRandStone()
     for(int i=0;i<11;i++)
         for(int j=0;j<8;j++){
             connect(st[j][i],SIGNAL(click()),this,SLOT(stone_clicked()));
-            connect(st[i][j],SIGNAL(superCrush(int type,int row,int col)),this,SLOT(superCrush(int index,int row,int col)));
+            connect(st[j][i],SIGNAL(superCrush(int ,int ,int )),this,SLOT(superCrush(int,int ,int )));
         }
 }
 
@@ -343,46 +356,35 @@ stone *game::randStone(int row ,int col)
     int type = 0;
     stone* ptr;
 
-    type = random()%4;
-    switch(type){
-        case 0:
-        ptr = new stone1(this,row,col);
-        break;
-        case 1:
-        ptr = new stone2(this,row,col);
-        break;
-        case 2:
-        ptr = new stone3(this,row,col);
-        break;
-        case 3:
-        ptr = new stone4(this,row,col);
-        break;
-    }
+    type = random()%4+1;
+    ptr = new stone1(this,type,row,col);
     qDebug()<<"stone gen!";
     ptr->button->show();
     return ptr;
 }
 
-stone *game::genSpecial(int type,int row, int col)
+
+stone *game::genSpecial(int which,int type,int row, int col)
 {
-    stone* ptr;
-    switch(type){
+    stone* ptr = NULL;
+    switch(which){
         case 1:
-        ptr = new stoneC(this,row,col);
+        ptr = new stoneC(this,type,row,col);
         break;
         case 2:
-        ptr = new stoneR(this,row,col);
+        ptr = new stoneR(this,type,row,col);
         break;
         case 5:
         ptr = new stoneS(this,row,col);
         break;
         case 6:
-        ptr = new stoneB(this,row,col);
+        ptr = new stoneB(this,type,row,col);
         break;
         default:
+        ptr = NULL;
         qDebug()<<"error switch!";
     }
-    qDebug()<<"Specialstone gen!";
+    qDebug()<<"Specialstone gen";
     ptr->button->show();
     return ptr;
 }
@@ -460,7 +462,42 @@ void game::stone_clicked()
         }
 }
 
-void game::superCrush(int index, int row, int col)
-{
-
+void game::superCrush(int type, int row, int col)
+{   if(type == 0)return;
+    if(type == 1){
+        //col crush
+        for(int i=0;i<8;i++){
+            if(st[i][col] != NULL){
+               st[i][col]->crush();
+               st[i][col] = NULL;
+            }
+        }
+    }else if(type == 2){
+        //row crush
+        for(int i=0;i<11;i++){
+            if(st[row][i] != NULL){
+               st[row][i]->crush();
+               st[row][i] = NULL;
+            }
+        }
+    }else if(type == 5){
+        //star crush
+        if(starCrushType == 0)
+               qDebug()<<"error in starCrush";
+        for(int i=0;i<8;i++)
+            for(int j=0;j<11;j++)
+                if(st[i][j]->button->text() == QString::number(starCrushType)){
+                   st[i][j]->crush();
+                   st[i][j] = NULL;
+                }
+        starCrushType = 0;
+    }else if(type == 6){
+        //bomb crush
+        for(int i=0;i<9;i++){
+            if(st[row-4+i%3][col-1+i/3] != NULL){
+                st[row-4+i%3][col-1+i/3]->crush();
+                st[row-4+i%3][col-1+i/3] = NULL;
+            }
+        }
+    }
 }

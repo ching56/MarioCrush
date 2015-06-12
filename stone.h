@@ -15,6 +15,7 @@ public:
     void stMove(int row, int col);
 signals:
     void click();
+    void superCrush(int type,int row,int col);
 protected:
     QPushButton *button;
     QLabel *bg;
