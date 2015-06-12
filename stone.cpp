@@ -3,7 +3,7 @@
 #include <QDebug>
 #include <QString>
 
-stone::stone(QWidget *parent, int row, int col): QObject(parent),isClicked(false),isMoved(false),isCrush(false)
+stone::stone(QWidget *parent, int row, int col): QObject(parent),isClicked(false),isMoved(false),isCrush(false),row(row),col(col)
 {
     bg = new QLabel(parent);
     button = new QPushButton(parent);

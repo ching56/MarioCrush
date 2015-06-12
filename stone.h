@@ -22,6 +22,8 @@ protected:
     bool isMoved;
     bool isCrush;
     int crushNum;
+    int row;
+    int col;
 protected slots:
     void button_clicked();
 };
