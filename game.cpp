@@ -53,16 +53,20 @@ game::game(QWidget *parent,result *res) :
     //for debug
 
     delete st[0][0];
-    delete st[0][1];
+    st[0][0] = new stoneS(this,0,0);
+    /*delete st[0][1];
     delete st[0][2];
     delete st[0][3];
     delete st[1][2];
+    delete st[0][4];
 
     st[0][0] = new stone1(this,1,0,0);
     st[0][1] = new stone1(this,1,0,1);
     st[0][2] = new stone1(this,2,0,2);
     st[0][3] = new stone1(this,1,0,3);
     st[1][2] = new stone1(this,1,1,2);
+    st[0][4] = new stone1(this,1,0,4);*/
+
 
     //for debug end
     for(int i=0;i<11;i++)
@@ -303,14 +307,20 @@ bool game::checkCrush()
                 makeList[i][j] = st[i][j]->crushNum;
                 listType[i][j] = st[i][j]->button->text().toInt();
         }
+
     for(int j=0;j<11;j++)
         for(int i=0;i<8;i++){
-            if(st[i][j]->isMoved && st[i][j]->button->text() == 0){
+            if(st[i][j] != NULL)
+            if(st[i][j]->isMoved && st[i][j]->button->text() == "5"){
                 for(int k=0;j<11;j++)
                     for(int l=0;i<8;i++)
-                        if(st[l][k]->isMoved &&st[l][k]->button->text() != 0){
+                        if(st[l][k] != NULL)
+                        if(st[l][k]->isMoved &&st[l][k]->button->text() != "0"){
+                            qDebug()<<"->checkCrush.starCrush";
                             starCrushType = st[l][k]->button->text().toInt();
+                            anyCrush = true;
                             st[i][j]->crush();
+                            qDebug()<<"end starCrush";
                         }
             }
 
@@ -531,9 +541,11 @@ void game::superCrush(int type, int row, int col)
                qDebug()<<"error in starCrush";
         for(int i=0;i<8;i++)
             for(int j=0;j<11;j++)
+                if(st[i][j] != NULL)
                 if(st[i][j]->button->text() == QString::number(starCrushType)){
                    st[i][j]->crush();
                    st[i][j] = NULL;
+                    qDebug()<<"starCrush"<<i<<j;
                 }
         starCrushType = 0;
     }else if(type == 6){
