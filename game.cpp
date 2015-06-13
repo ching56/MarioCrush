@@ -50,12 +50,27 @@ game::game(QWidget *parent,result *res) :
                st[i][j]->button->text()==st[i][j+2]->button->text())
                 redo=true;
     }while(redo);
+    //for debug
 
+    delete st[0][0];
+    delete st[0][1];
+    delete st[0][2];
+    delete st[0][3];
+    delete st[1][2];
+
+    st[0][0] = new stone1(this,1,0,0);
+    st[0][1] = new stone1(this,1,0,1);
+    st[0][2] = new stone1(this,2,0,2);
+    st[0][3] = new stone1(this,1,0,3);
+    st[1][2] = new stone1(this,1,1,2);
+
+    //for debug end
     for(int i=0;i<11;i++)
         for(int j=0;j<8;j++){
             connect(st[j][i],SIGNAL(click()),this,SLOT(stone_clicked()));
             connect(st[j][i],SIGNAL(superCrush(int ,int ,int )),this,SLOT(superCrush(int ,int ,int )));
         }
+    qDebug()<<"->constructor";
 }
 
 game::~game()
@@ -71,6 +86,7 @@ bool game::checkCrush()
         for(int i=0;i<8;i++){
             type[i][j] = st[i][j]->button->text();
         }
+    qDebug()<<"->checkCrush.checkRow in 3";
     //check row in 3
     for(int j=0;j<11;j++)
         for(int i=0;i<6;i++){
@@ -108,7 +124,7 @@ bool game::checkCrush()
                 anyCrush = true;
             }
     }
-
+    qDebug()<<"->checkCrush.checkRow in 4";
     //check row in 4
     for(int j=0;j<11;j++)
         for(int i=0;i<5;i++){
@@ -151,7 +167,7 @@ bool game::checkCrush()
                 anyCrush = true;
             }
     }
-
+    qDebug()<<"->checkCrush.checkRow in 5";
     //check row in 5
     for(int j=0;j<11;j++)
         for(int i=0;i<4;i++){
@@ -169,7 +185,7 @@ bool game::checkCrush()
                 }
             }
     }
-
+    qDebug()<<"->checkCrush.checkCol in 3";
     //check col in 3
     for(int j=0;j<9;j++)
         for(int i=0;i<8;i++){
@@ -217,6 +233,7 @@ bool game::checkCrush()
                 anyCrush = true;
             }
     }
+    qDebug()<<"->checkCrush.checkCol in 4";
     //check col in 4
     for(int j=0;j<8;j++)
         for(int i=0;i<8;i++){
@@ -258,6 +275,7 @@ bool game::checkCrush()
                 anyCrush = true;
             }
     }
+    qDebug()<<"->checkCrush.checkCol in 5";
     //check col in 5
     for(int j=0;j<6;j++)
         for(int i=0;i<8;i++){
@@ -273,9 +291,11 @@ bool game::checkCrush()
                 anyCrush = true;
             }
     }
+
     int makeList[8][11];
     int listType[8][11];
     //record
+    qDebug()<<"->checkCrush.record makelist";
     for(int j=0;j<11;j++)
         for(int i=0;i<8;i++){
             makeList[i][j]=0;
@@ -296,53 +316,62 @@ bool game::checkCrush()
 
         }
     //crush
+    qDebug()<<"->checkCrush.crush";
     for(int j=0;j<11;j++)
         for(int i=0;i<8;i++)
             if(st[i][j] != NULL)
             if(st[i][j]->isCrush){
+                qDebug()<<"crush "<<i<<j;
                 st[i][j]->crush();
                 st[i][j] = NULL;
+                qDebug()<<"finished crush";
             }
     //make
+    qDebug()<<"->checkCrush.make";
     for(int j=0;j<11;j++)
         for(int i=0;i<8;i++){
             if(makeList[i][j] != 0){
                     st[i][j] = genSpecial(makeList[i][j],listType[i][j],i,j);
+                    qDebug()<<"genSpecial";
             }
         }
     //reset isMove, isCrush?
-    qDebug()<<"crush!";
+    if(anyCrush)qDebug()<<"crush!";
     return anyCrush;
 }
 
 void game::refresh()
 {   qDebug()<<"refresh";
     for(int j=0;j<11;j++)
-        for(int i=0;i<8;i++)
+        for(int i=0;i<8;i++){
+            if(st[i][j] != NULL)
             st[i][j]->isMoved = false;
+        }
     for(int j=10;j>-1;j--)
     for(int i=7;i>-1;i--){
         if(st[i][j]==NULL){
         for(int k=j;k>-1;k--){
             if(st[i][k]!=NULL && st[i][k+1]==NULL){
-                qDebug()<<"should be..."<<i<<k;
                 st[i][k+1] = st[i][k];
                 st[i][k] = NULL;
                 st[i][k+1]->stMove(i,k+1);
+                st[i][k+1]->row = i;
+                st[i][k+1]->col = k+1;
                 k+=2;
             }
         }
         }
     }
+    qDebug()<<"refresh end";
 }
 
 void game::fillRandStone()
 {
+    qDebug()<<"fill";
     for(int j=0;j<11;j++)
         for(int i=0;i<8;i++)
             if(st[i][j]==NULL){
                 st[i][j] = randStone(i,j);
-                qDebug()<<"FILL";
             }
     for(int i=0;i<11;i++)
         for(int j=0;j<8;j++){
@@ -414,7 +443,7 @@ void game::stone_clicked()
     bool isNearby = false;
     if(rec_i[1]-rec_i[0]==1 && rec_j[0]==rec_j[1])isNearby=true;
     if(rec_i[1]==rec_i[0] && rec_j[1]-rec_j[0]==1)isNearby=true;
-
+    qDebug()<<"->stone_clicked.nearby";
     if(isNearby){
         stone *temp;
 
@@ -424,10 +453,15 @@ void game::stone_clicked()
         st[rec_i[0]][rec_j[0]] = st[rec_i[1]][rec_j[1]];
         st[rec_i[1]][rec_j[1]] = temp;
         st[rec_i[0]][rec_j[0]]->stMove(rec_i[0],rec_j[0]);
+        st[rec_i[0]][rec_j[0]]->row = rec_i[0];
+        st[rec_i[0]][rec_j[0]]->col = rec_j[0];
         st[rec_i[1]][rec_j[1]]->stMove(rec_i[1],rec_j[1]);
-
+        st[rec_i[1]][rec_j[1]]->row = rec_i[1];
+        st[rec_i[1]][rec_j[1]]->col = rec_j[1];
+        qDebug()<<"->checkCrush";
         if(checkCrush()/*exchange and crush*/){
         //(move)
+            qDebug()<<"->in check if";
             refresh();
             fillRandStone();
             while(checkCrush()){
@@ -444,13 +478,17 @@ void game::stone_clicked()
             st[rec_i[0]][rec_j[0]] = st[rec_i[1]][rec_j[1]];
             st[rec_i[1]][rec_j[1]] = temp;
             st[rec_i[0]][rec_j[0]]->stMove(rec_i[0],rec_j[0]);
+            st[rec_i[0]][rec_j[0]]->row = rec_i[0];
+            st[rec_i[0]][rec_j[0]]->col = rec_j[0];
             st[rec_i[1]][rec_j[1]]->stMove(rec_i[1],rec_j[1]);
+            st[rec_i[1]][rec_j[1]]->row = rec_i[1];
+            st[rec_i[1]][rec_j[1]]->col = rec_j[1];
             st[rec_i[0]][rec_j[0]]->isMoved = false;
             st[rec_i[1]][rec_j[1]]->isMoved = false;
         }
 
     }
-
+   qDebug()<<"->stone_clicked.reset isMoved";
    for(int i = 0;i<2;i++)
         st[rec_i[i]][rec_j[i]]->isClicked=false;
 
@@ -463,21 +501,28 @@ void game::stone_clicked()
 }
 
 void game::superCrush(int type, int row, int col)
-{   if(type == 0)return;
+{
+
+    if(type == 0)return;
+    qDebug()<<"superCrush!"<<type<<row<<col;
+    delete st[row][col];
+    st[row][col] = NULL;
     if(type == 1){
         //col crush
-        for(int i=0;i<8;i++){
-            if(st[i][col] != NULL){
-               st[i][col]->crush();
-               st[i][col] = NULL;
+        for(int i=0;i<11;i++){
+            if(st[row][i] != NULL){
+                    qDebug()<<" in supercrush loop"<<row<<i;
+               st[row][i]->crush();
+               st[row][i] = NULL;
+
             }
         }
     }else if(type == 2){
         //row crush
-        for(int i=0;i<11;i++){
-            if(st[row][i] != NULL){
-               st[row][i]->crush();
-               st[row][i] = NULL;
+        for(int i=0;i<8;i++){
+            if(st[i][col] != NULL){
+               st[i][col]->crush();
+               st[i][col] = NULL;
             }
         }
     }else if(type == 5){
