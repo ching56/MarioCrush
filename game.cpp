@@ -53,19 +53,16 @@ game::game(QWidget *parent,result *res) :
     //for debug
 
     delete st[0][0];
-    st[0][0] = new stoneS(this,0,0);
-    /*delete st[0][1];
-    delete st[0][2];
-    delete st[0][3];
-    delete st[1][2];
-    delete st[0][4];
+    delete st[1][0];
+    delete st[2][1];
+    delete st[2][2];
+    delete st[3][0];
 
     st[0][0] = new stone1(this,1,0,0);
-    st[0][1] = new stone1(this,1,0,1);
-    st[0][2] = new stone1(this,2,0,2);
-    st[0][3] = new stone1(this,1,0,3);
-    st[1][2] = new stone1(this,1,1,2);
-    st[0][4] = new stone1(this,1,0,4);*/
+    st[1][0] = new stone1(this,1,1,0);
+    st[2][1] = new stone1(this,1,2,1);
+    st[2][2] = new stone1(this,1,2,2);
+    st[3][0] = new stone1(this,1,3,0);
 
 
     //for debug end
@@ -310,18 +307,20 @@ bool game::checkCrush()
 
     for(int j=0;j<11;j++)
         for(int i=0;i<8;i++){
+
             if(st[i][j] != NULL)
             if(st[i][j]->isMoved && st[i][j]->button->text() == "5"){
-                for(int k=0;j<11;j++)
-                    for(int l=0;i<8;i++)
+                for(int k=0;k<11;k++)
+                    for(int l=0;l<8;l++){
                         if(st[l][k] != NULL)
-                        if(st[l][k]->isMoved &&st[l][k]->button->text() != "0"){
+                        if(st[l][k]->isMoved &&st[l][k]->button->text() != "5"){
                             qDebug()<<"->checkCrush.starCrush";
                             starCrushType = st[l][k]->button->text().toInt();
                             anyCrush = true;
                             st[i][j]->crush();
                             qDebug()<<"end starCrush";
                         }
+                    }
             }
 
         }
@@ -533,6 +532,7 @@ void game::superCrush(int type, int row, int col)
             if(st[i][col] != NULL){
                st[i][col]->crush();
                st[i][col] = NULL;
+               qDebug()<<"in rowCrush loop"<<i<<col;
             }
         }
     }else if(type == 5){
@@ -545,16 +545,18 @@ void game::superCrush(int type, int row, int col)
                 if(st[i][j]->button->text() == QString::number(starCrushType)){
                    st[i][j]->crush();
                    st[i][j] = NULL;
-                    qDebug()<<"starCrush"<<i<<j;
+                   qDebug()<<"starCrush"<<i<<j;
                 }
         starCrushType = 0;
     }else if(type == 6){
         //bomb crush
         for(int i=0;i<9;i++){
-            if(st[row-4+i%3][col-1+i/3] != NULL){
-                st[row-4+i%3][col-1+i/3]->crush();
-                st[row-4+i%3][col-1+i/3] = NULL;
+            if((row-1+i%3)>-1 && (row-1+i%3) <8 && (col-1+i/3) > -1 && (col-1+i/3) < 11)
+            if(st[row-1+i%3][col-1+i/3] != NULL){
+                st[row-1+i%3][col-1+i/3]->crush();
+                st[row-1+i%3][col-1+i/3] = NULL;
             }
         }
     }
+    qDebug()<<"out superCrush loop";
 }
