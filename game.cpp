@@ -12,6 +12,27 @@ game::game(QWidget *parent,result *res) :
     srandom(time(NULL));
     ui->setupUi(this);
     bool redo=false;
+    st1[0].addPixmap(QPixmap(":/boo.png"));
+    st1[1].addPixmap(QPixmap(":/flower.png"));
+    st1[2].addPixmap(QPixmap(":/turtle.png"));
+    st1[3].addPixmap(QPixmap(":/mushroom.png"));
+
+    stc[0].addPixmap(QPixmap(":/colboommushroom.png"));
+    stc[1].addPixmap(QPixmap(":/colflowermushroom.png"));
+    stc[2].addPixmap(QPixmap(":/colturtlemushroom.png"));
+    stc[3].addPixmap(QPixmap(":/colmushroommushroom.png"));
+
+    str[0].addPixmap(QPixmap(":/rowboomushroom.png"));
+    str[1].addPixmap(QPixmap(":/rowflowermushroom.png"));
+    str[2].addPixmap(QPixmap(":/rowturtlemushroom.png"));
+    str[3].addPixmap(QPixmap(":/rowmushroommushroom.png"));
+
+    stb[0].addPixmap(QPixmap(":/boobomb.png"));
+    stb[1].addPixmap(QPixmap(":/flowerbomb.png"));
+    stb[2].addPixmap(QPixmap(":/turtlebomb.png"));
+    stb[3].addPixmap(QPixmap(":/mushroombomb.png"));
+
+    sts.addPixmap(QPixmap(":/star.png"));
 
     for(int i=0;i<11;i++)
         for(int j=0;j<8;j++){
@@ -70,6 +91,10 @@ game::game(QWidget *parent,result *res) :
         for(int j=0;j<8;j++){
             connect(st[j][i],SIGNAL(click()),this,SLOT(stone_clicked()));
             connect(st[j][i],SIGNAL(superCrush(int ,int ,int )),this,SLOT(superCrush(int ,int ,int )));
+            for(int k=1;k<5;k++){
+                if(st[j][i]->button->text() == QString::number(k))
+                    st[j][i]->button->setIcon(st1[k-1]);
+            }
         }
     qDebug()<<"->constructor";
 }

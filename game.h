@@ -29,6 +29,11 @@ private:
     int star;
     int move;
     int starCrushType;
+    QIcon st1[4];
+    QIcon stc[4];
+    QIcon str[4];
+    QIcon stb[4];
+    QIcon sts;
     bool checkCrush();
     void refresh();
     void fillRandStone();

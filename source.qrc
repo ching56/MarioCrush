@@ -1,0 +1,21 @@
+<RCC>
+    <qresource prefix="/">
+        <file>boo.png</file>
+        <file>boobomb.png</file>
+        <file>colboomushroom.png</file>
+        <file>colflowermushroom.png</file>
+        <file>colmushroommushroom.png</file>
+        <file>colturtlemushroom.png</file>
+        <file>flower.png</file>
+        <file>flowerbomb.png</file>
+        <file>mushroom.png</file>
+        <file>mushroombomb.png</file>
+        <file>rowboomushroom.png</file>
+        <file>rowflowermushroom.png</file>
+        <file>rowmushroommushroom.png</file>
+        <file>rowturtlemushroom.png</file>
+        <file>star.png</file>
+        <file>turtle.png</file>
+        <file>turtlebomb.png</file>
+    </qresource>
+</RCC>

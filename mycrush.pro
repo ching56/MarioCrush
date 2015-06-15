@@ -36,3 +36,6 @@ HEADERS  += startscreen.h \
 FORMS    += startscreen.ui \
     game.ui \
     result.ui
+
+RESOURCES += \
+    source.qrc

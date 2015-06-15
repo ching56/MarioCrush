@@ -12,7 +12,7 @@ stone::stone(QWidget *parent, int row, int col): QObject(parent),isClicked(false
     bg->setStyleSheet("background-color: rgb(179, 179, 179);");
     bg->hide();
     button->setFlat(true);
-    button->setStyleSheet("border:1px solid;background: transparent;");
+    button->setStyleSheet("border:0px solid;background: transparent;");
     button->setIconSize(button->size());
     connect(button,SIGNAL(clicked()),this,SLOT(button_clicked()));
 }
