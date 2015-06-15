@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <QDebug>
 #include <string>
+#include <typeinfo>
 
 game::game(QWidget *parent,result *res) :
     QWidget(parent),
@@ -17,7 +18,7 @@ game::game(QWidget *parent,result *res) :
     st1[2].addPixmap(QPixmap(":/turtle.png"));
     st1[3].addPixmap(QPixmap(":/mushroom.png"));
 
-    stc[0].addPixmap(QPixmap(":/colboommushroom.png"));
+    stc[0].addPixmap(QPixmap(":/colboomushroom.png"));
     stc[1].addPixmap(QPixmap(":/colflowermushroom.png"));
     stc[2].addPixmap(QPixmap(":/colturtlemushroom.png"));
     stc[3].addPixmap(QPixmap(":/colmushroommushroom.png"));
@@ -71,22 +72,7 @@ game::game(QWidget *parent,result *res) :
                st[i][j]->button->text()==st[i][j+2]->button->text())
                 redo=true;
     }while(redo);
-    //for debug
 
-    delete st[0][0];
-    delete st[1][0];
-    delete st[2][1];
-    delete st[2][2];
-    delete st[3][0];
-
-    st[0][0] = new stone1(this,1,0,0);
-    st[1][0] = new stone1(this,1,1,0);
-    st[2][1] = new stone1(this,1,2,1);
-    st[2][2] = new stone1(this,1,2,2);
-    st[3][0] = new stone1(this,1,3,0);
-
-
-    //for debug end
     for(int i=0;i<11;i++)
         for(int j=0;j<8;j++){
             connect(st[j][i],SIGNAL(click()),this,SLOT(stone_clicked()));
@@ -197,7 +183,6 @@ bool game::checkCrush()
     //check row in 5
     for(int j=0;j<11;j++)
         for(int i=0;i<4;i++){
-            if(i==0){
                 if( type[i][j] == type[i+1][j]
                     && type[i][j] == type[i+2][j]
                     && type[i][j] == type[i+3][j]
@@ -209,7 +194,7 @@ bool game::checkCrush()
                 }
                 anyCrush = true;
                 }
-            }
+
     }
     qDebug()<<"->checkCrush.checkCol in 3";
     //check col in 3
@@ -303,9 +288,9 @@ bool game::checkCrush()
     }
     qDebug()<<"->checkCrush.checkCol in 5";
     //check col in 5
-    for(int j=0;j<6;j++)
+    for(int j=0;j<7;j++)
         for(int i=0;i<8;i++){
-            if(j==0 && type[i][j] == type[i][j+1]
+            if(  type[i][j] == type[i][j+1]
                     && type[i][j] == type[i][j+2]
                     && type[i][j] == type[i][j+3]
                     && type[i][j] == type[i][j+4]){
@@ -320,6 +305,7 @@ bool game::checkCrush()
 
     int makeList[8][11];
     int listType[8][11];
+    bool isstarCrush = false;
     //record
     qDebug()<<"->checkCrush.record makelist";
     for(int j=0;j<11;j++)
@@ -332,11 +318,12 @@ bool game::checkCrush()
 
     for(int j=0;j<11;j++)
         for(int i=0;i<8;i++){
-
             if(st[i][j] != NULL)
             if(st[i][j]->isMoved && st[i][j]->button->text() == "5"){
-                for(int k=0;k<11;k++)
+                for(int k=0;k<11;k++){
                     for(int l=0;l<8;l++){
+                        if(isstarCrush)
+                            break;
                         if(st[l][k] != NULL)
                         if(st[l][k]->isMoved &&st[l][k]->button->text() != "5"){
                             qDebug()<<"->checkCrush.starCrush";
@@ -344,8 +331,11 @@ bool game::checkCrush()
                             anyCrush = true;
                             st[i][j]->crush();
                             qDebug()<<"end starCrush";
+                            isstarCrush = true;
                         }
+
                     }
+                }
             }
 
         }
@@ -369,7 +359,6 @@ bool game::checkCrush()
                     qDebug()<<"genSpecial";
             }
         }
-    //reset isMove, isCrush?
     if(anyCrush)qDebug()<<"crush!";
     return anyCrush;
 }
@@ -454,8 +443,8 @@ stone *game::genSpecial(int which,int type,int row, int col)
 
 void game::stone_clicked()
 {
-    int rec_i[2]={0};
-    int rec_j[2]={0};
+    int rec_i[2]={0,0};
+    int rec_j[2]={0,0};
     int boolCount = 0;
     for(int i=0;i<8;i++)
         for(int j=0;j<11;j++){
@@ -523,14 +512,29 @@ void game::stone_clicked()
 
     }
    qDebug()<<"->stone_clicked.reset isMoved";
-   for(int i = 0;i<2;i++)
-        st[rec_i[i]][rec_j[i]]->isClicked=false;
+   for(int i=0;i<8;i++)
+       for(int j=0;j<11;j++){
+               st[i][j]->bg->hide();
+               st[i][j]->isClicked = false;
+       }
 
     }
-    for(int i=0;i<8;i++)
-        for(int j=0;j<11;j++){
-            if(st[i][j]->isClicked)st[i][j]->bg->show();
-            if(!st[i][j]->isClicked)st[i][j]->bg->hide();
+
+    qDebug()<<"reset Icon";
+    for(int i=0;i<11;i++)
+        for(int j=0;j<8;j++){
+            for(int k=1;k<5;k++){
+                if(typeid(*st[j][i]) == typeid(stone1) && st[j][i]->button->text() == QString::number(k))
+                    st[j][i]->button->setIcon(st1[k-1]);
+                if(typeid(*st[j][i]) == typeid(stoneB) && st[j][i]->button->text() == QString::number(k))
+                    st[j][i]->button->setIcon(stb[k-1]);
+                if(typeid(*st[j][i]) == typeid(stoneR) && st[j][i]->button->text() == QString::number(k))
+                    st[j][i]->button->setIcon(str[k-1]);
+                if(typeid(*st[j][i]) == typeid(stoneC) && st[j][i]->button->text() == QString::number(k))
+                    st[j][i]->button->setIcon(stc[k-1]);
+                if(typeid(*st[j][i]) == typeid(stoneS))
+                    st[j][i]->button->setIcon(sts);
+            }
         }
 }
 

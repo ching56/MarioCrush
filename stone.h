@@ -2,7 +2,7 @@
 #define STONE_H
 
 #include <QObject>
-#include <QPushButton>
+#include <QToolbutton>
 #include <QLabel>
 class stone : public QObject
 {
@@ -17,7 +17,7 @@ signals:
     void click();
     void superCrush(int type,int row,int col);
 protected:
-    QPushButton *button;
+    QToolButton *button;
     QLabel *bg;
     bool isClicked;
     bool isMoved;
