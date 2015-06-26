@@ -8,11 +8,20 @@
 game::game(QWidget *parent,result *res) :
     QWidget(parent),
     ui(new Ui::game),
-    score(0),star(0),move(0),starCrushType(0)
+    score(0),times(60),move(0),starCrushType(0),res(res)
 {
     srandom(time(NULL));
     ui->setupUi(this);
+    ui->lcdNumber_2->display(times);
     bool redo=false;
+    timer2 = new QTimer(this);
+    connect(timer2,SIGNAL(timeout()),this,SLOT(moveclock()));
+    timer2->start(1000);
+
+    ui->s1->hide();
+    ui->s2->hide();
+    ui->s3->hide();
+
     st1[0].addPixmap(QPixmap(":/boo.png"));
     st1[1].addPixmap(QPixmap(":/flower.png"));
     st1[2].addPixmap(QPixmap(":/turtle.png"));
@@ -77,6 +86,7 @@ game::game(QWidget *parent,result *res) :
         for(int j=0;j<8;j++){
             connect(st[j][i],SIGNAL(click()),this,SLOT(stone_clicked()));
             connect(st[j][i],SIGNAL(superCrush(int ,int ,int )),this,SLOT(superCrush(int ,int ,int )));
+            connect(st[j][i],SIGNAL(getPoint()),this,SLOT(scorePlus()));
             for(int k=1;k<5;k++){
                 if(st[j][i]->button->text() == QString::number(k))
                     st[j][i]->button->setIcon(st1[k-1]);
@@ -316,16 +326,17 @@ bool game::checkCrush()
                 listType[i][j] = st[i][j]->button->text().toInt();
         }
 
+    qDebug()<<"trigger starCrush";
     for(int j=0;j<11;j++)
         for(int i=0;i<8;i++){
             if(st[i][j] != NULL)
-            if(st[i][j]->isMoved && st[i][j]->button->text() == "5"){
+            if(st[i][j]->isClicked && st[i][j]->button->text() == "5"){
                 for(int k=0;k<11;k++){
                     for(int l=0;l<8;l++){
                         if(isstarCrush)
                             break;
                         if(st[l][k] != NULL)
-                        if(st[l][k]->isMoved &&st[l][k]->button->text() != "5"){
+                        if(st[l][k]->isClicked &&st[l][k]->button->text() != "5"){
                             qDebug()<<"->checkCrush.starCrush";
                             starCrushType = st[l][k]->button->text().toInt();
                             anyCrush = true;
@@ -338,6 +349,11 @@ bool game::checkCrush()
                 }
             }
 
+        }
+    for(int j=0;j<11;j++)
+        for(int i=0;i<8;i++){
+            if(st[i][j] != NULL)
+            st[i][j]->isMoved = false;
         }
     //crush
     qDebug()<<"->checkCrush.crush";
@@ -356,6 +372,8 @@ bool game::checkCrush()
         for(int i=0;i<8;i++){
             if(makeList[i][j] != 0){
                     st[i][j] = genSpecial(makeList[i][j],listType[i][j],i,j);
+                    connect(st[i][j],SIGNAL(click()),this,SLOT(stone_clicked()));
+                    connect(st[i][j],SIGNAL(superCrush(int ,int ,int )),this,SLOT(superCrush(int,int ,int )));
                     qDebug()<<"genSpecial";
             }
         }
@@ -365,27 +383,23 @@ bool game::checkCrush()
 
 void game::refresh()
 {   qDebug()<<"refresh";
-    for(int j=0;j<11;j++)
-        for(int i=0;i<8;i++){
-            if(st[i][j] != NULL)
-            st[i][j]->isMoved = false;
-        }
+
     for(int j=10;j>-1;j--)
     for(int i=7;i>-1;i--){
-        if(st[i][j]==NULL){
-        for(int k=j;k>-1;k--){
+        if(st[i][j]==NULL)
+        for(int k=j-1;k>-1;k--){
             if(st[i][k]!=NULL && st[i][k+1]==NULL){
                 st[i][k+1] = st[i][k];
                 st[i][k] = NULL;
                 st[i][k+1]->stMove(i,k+1);
-                st[i][k+1]->row = i;
-                st[i][k+1]->col = k+1;
                 k+=2;
+                if(k>10)break;
+
             }
+
         }
-        }
+
     }
-    qDebug()<<"refresh end";
 }
 
 void game::fillRandStone()
@@ -395,12 +409,12 @@ void game::fillRandStone()
         for(int i=0;i<8;i++)
             if(st[i][j]==NULL){
                 st[i][j] = randStone(i,j);
+                connect(st[i][j],SIGNAL(click()),this,SLOT(stone_clicked()));
+                connect(st[i][j],SIGNAL(superCrush(int ,int ,int )),this,SLOT(superCrush(int,int ,int )));
+                if(typeid(*st[i][j]).name() == typeid(stone1).name()){
+                    connect(st[i][j],SIGNAL(getPoint()),this,SLOT(scorePlus()));
+                }
             }
-    for(int i=0;i<11;i++)
-        for(int j=0;j<8;j++){
-            connect(st[j][i],SIGNAL(click()),this,SLOT(stone_clicked()));
-            connect(st[j][i],SIGNAL(superCrush(int ,int ,int )),this,SLOT(superCrush(int,int ,int )));
-        }
 }
 
 stone *game::randStone(int row ,int col)
@@ -434,11 +448,37 @@ stone *game::genSpecial(int which,int type,int row, int col)
         break;
         default:
         ptr = NULL;
-        qDebug()<<"error switch!";
+        qDebug()<<" switch!";
     }
     qDebug()<<"Specialstone gen";
     ptr->button->show();
     return ptr;
+}
+
+void game::moveclock()
+{
+    times--;
+    ui->lcdNumber_2->display(times);
+    if(times == 0){
+        res->getScore(score);
+        res->show();
+        delete timer2;
+    }
+}
+
+void game::scorePlus()
+{
+    score = score +3;
+    ui->lcdNumber->display(score);
+    qDebug()<<"score ++";
+    //check star
+
+    if(score>1000)
+        ui->s1->show();
+    if(score>2000)
+        ui->s2->show();
+    if(score>3000)
+        ui->s3->show();
 }
 
 void game::stone_clicked()
@@ -476,11 +516,7 @@ void game::stone_clicked()
         st[rec_i[0]][rec_j[0]] = st[rec_i[1]][rec_j[1]];
         st[rec_i[1]][rec_j[1]] = temp;
         st[rec_i[0]][rec_j[0]]->stMove(rec_i[0],rec_j[0]);
-        st[rec_i[0]][rec_j[0]]->row = rec_i[0];
-        st[rec_i[0]][rec_j[0]]->col = rec_j[0];
         st[rec_i[1]][rec_j[1]]->stMove(rec_i[1],rec_j[1]);
-        st[rec_i[1]][rec_j[1]]->row = rec_i[1];
-        st[rec_i[1]][rec_j[1]]->col = rec_j[1];
         qDebug()<<"->checkCrush";
         if(checkCrush()/*exchange and crush*/){
         //(move)
@@ -501,11 +537,7 @@ void game::stone_clicked()
             st[rec_i[0]][rec_j[0]] = st[rec_i[1]][rec_j[1]];
             st[rec_i[1]][rec_j[1]] = temp;
             st[rec_i[0]][rec_j[0]]->stMove(rec_i[0],rec_j[0]);
-            st[rec_i[0]][rec_j[0]]->row = rec_i[0];
-            st[rec_i[0]][rec_j[0]]->col = rec_j[0];
             st[rec_i[1]][rec_j[1]]->stMove(rec_i[1],rec_j[1]);
-            st[rec_i[1]][rec_j[1]]->row = rec_i[1];
-            st[rec_i[1]][rec_j[1]]->col = rec_j[1];
             st[rec_i[0]][rec_j[0]]->isMoved = false;
             st[rec_i[1]][rec_j[1]]->isMoved = false;
         }
@@ -524,6 +556,7 @@ void game::stone_clicked()
     for(int i=0;i<11;i++)
         for(int j=0;j<8;j++){
             for(int k=1;k<5;k++){
+                if(st[j][i] == NULL)qDebug()<<"error reset";
                 if(typeid(*st[j][i]) == typeid(stone1) && st[j][i]->button->text() == QString::number(k))
                     st[j][i]->button->setIcon(st1[k-1]);
                 if(typeid(*st[j][i]) == typeid(stoneB) && st[j][i]->button->text() == QString::number(k))
@@ -536,11 +569,12 @@ void game::stone_clicked()
                     st[j][i]->button->setIcon(sts);
             }
         }
+    qDebug()<<"end click";
 }
 
 void game::superCrush(int type, int row, int col)
 {
-
+    if(type == 5 && starCrushType == 0)return;
     if(type == 0)return;
     qDebug()<<"superCrush!"<<type<<row<<col;
     delete st[row][col];
@@ -554,6 +588,7 @@ void game::superCrush(int type, int row, int col)
                st[row][i] = NULL;
 
             }
+            qDebug()<<"end colCrush loop";
         }
     }else if(type == 2){
         //row crush
@@ -566,8 +601,9 @@ void game::superCrush(int type, int row, int col)
         }
     }else if(type == 5){
         //star crush
-        if(starCrushType == 0)
+        if(starCrushType == 0){
                qDebug()<<"error in starCrush";
+        }
         for(int i=0;i<8;i++)
             for(int j=0;j<11;j++)
                 if(st[i][j] != NULL)
@@ -576,7 +612,7 @@ void game::superCrush(int type, int row, int col)
                    st[i][j] = NULL;
                    qDebug()<<"starCrush"<<i<<j;
                 }
-        starCrushType = 0;
+         starCrushType= 0;
     }else if(type == 6){
         //bomb crush
         for(int i=0;i<9;i++){

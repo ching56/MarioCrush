@@ -11,6 +11,8 @@ class stone1 :public stone
 public:
     stone1(QWidget *parent,int type ,int row, int col);
     void crush();
+signals:
+    void getPoint();
 };
 
 #endif // STONE1_H

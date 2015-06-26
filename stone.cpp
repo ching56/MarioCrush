@@ -23,11 +23,13 @@ stone::~stone()
     delete button;
 }
 
-void stone::stMove(int row, int col)
+void stone::stMove(int r, int c)
 {
-    button->setGeometry(20+row*45,185+col*45,45,45);
-    bg->setGeometry(20+row*45,185+col*45,45,45);
+    button->setGeometry(20+r*45,185+c*45,45,45);
+    bg->setGeometry(20+r*45,185+c*45,45,45);
     isMoved = true;
+    row = r;
+    col = c;
 }
 
 void stone::button_clicked()

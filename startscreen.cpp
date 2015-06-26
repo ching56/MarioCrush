@@ -6,7 +6,7 @@ startscreen::startscreen(QMainWindow *parent) :
 {
     ui->setupUi(this);
     gamewindow = NULL;
-    resultwindow = new result;
+    resultwindow = new result(this);
 }
 
 startscreen::~startscreen()
@@ -20,3 +20,4 @@ void startscreen::on_botton_start_clicked()
     gamewindow = new game(this,resultwindow);
     this->setCentralWidget(gamewindow);
 }
+

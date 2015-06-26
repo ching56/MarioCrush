@@ -2,6 +2,7 @@
 #define RESULT_H
 
 #include <QDialog>
+#include <QLabel>
 
 namespace Ui {
 class result;
@@ -14,8 +15,10 @@ class result : public QDialog
 public:
     explicit result(QWidget *parent = 0);
     ~result();
+    void getScore(int score);
 
 private:
+    QLabel* Text;
     Ui::result *ui;
 };
 

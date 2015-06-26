@@ -10,9 +10,9 @@ class stone : public QObject
     friend class game;
 public:
     stone(QWidget *parent, int row, int col);
-    ~stone();
+    virtual ~stone();
     virtual void crush()=0;
-    void stMove(int row, int col);
+    void stMove(int r, int c);
 signals:
     void click();
     void superCrush(int type,int row,int col);
