@@ -19,5 +19,16 @@ void startscreen::on_botton_start_clicked()
 {
     gamewindow = new game(this,resultwindow);
     this->setCentralWidget(gamewindow);
+    connect(resultwindow,SIGNAL(reset()),this,SLOT(resetgame()));
+}
+
+void startscreen::resetgame()
+{
+    resultwindow->hide();
+    if(gamewindow != NULL)
+        delete gamewindow;
+    gamewindow = new game( this,resultwindow);
+    this->setCentralWidget(gamewindow);
+
 }
 

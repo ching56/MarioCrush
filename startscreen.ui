@@ -142,7 +142,7 @@
   <widget class="QLabel" name="label_2">
    <property name="geometry">
     <rect>
-     <x>60</x>
+     <x>70</x>
      <y>260</y>
      <width>291</width>
      <height>81</height>
@@ -163,7 +163,7 @@
     <string notr="true">background-color: rgb(255, 102, 102,0);</string>
    </property>
    <property name="text">
-    <string>Get 50000 points in time!</string>
+    <string>Get 3000 points in time!</string>
    </property>
   </widget>
   <zorder>label_rule</zorder>

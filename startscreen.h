@@ -21,6 +21,7 @@ public:
 private slots:
 
     void on_botton_start_clicked();
+    void resetgame();
 
 private:
     Ui::startscreen *ui;

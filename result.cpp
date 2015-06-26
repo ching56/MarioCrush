@@ -33,3 +33,13 @@ void result::getScore(int score)
     }
 
 }
+
+void result::on_botton_start_clicked()
+{
+    emit reset();
+}
+
+void result::on_botton_start_2_clicked()
+{
+        QApplication::exit(0);
+}
