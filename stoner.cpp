@@ -7,3 +7,8 @@ void stoneR::crush()
             emit superCrush(2,row,col);
 
 }
+
+stoneR::~stoneR()
+{
+
+}

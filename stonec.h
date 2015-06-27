@@ -11,6 +11,8 @@ class stoneC :public stone
 public:
     stoneC(QWidget *parent,int type ,int row, int col);
     void crush();
+    ~stoneC();
+
 };
 
 #endif // STONEC_H

@@ -11,7 +11,6 @@
 #include "stoner.h"
 #include "stones.h"
 #include "result.h"
-
 namespace Ui {
 class game;
 }
@@ -22,11 +21,14 @@ class game : public QWidget
 
 public:
     explicit game(QWidget *parent,result *res);
+    int star;
     ~game();
+        int score;
+signals:
+    void quit(int star , int score);
 private:
     Ui::game *ui;
     stone *st[8][11];
-    int score;
     int times;
     int move;
     int starCrushType;

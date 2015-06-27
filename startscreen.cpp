@@ -11,6 +11,7 @@ startscreen::startscreen(QMainWindow *parent) :
 
 startscreen::~startscreen()
 {
+    emit(gamewindow->star,gamewindow->score);
     delete ui;
 }
 

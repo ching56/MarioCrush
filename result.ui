@@ -211,7 +211,7 @@
   <widget class="QPushButton" name="botton_start">
    <property name="geometry">
     <rect>
-     <x>30</x>
+     <x>130</x>
      <y>230</y>
      <width>151</width>
      <height>61</height>
@@ -233,31 +233,6 @@
     <string>restart</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="botton_start_2">
-   <property name="geometry">
-    <rect>
-     <x>210</x>
-     <y>230</y>
-     <width>151</width>
-     <height>61</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Letter Gothic Std</family>
-     <pointsize>18</pointsize>
-     <weight>75</weight>
-     <italic>false</italic>
-     <bold>true</bold>
-    </font>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">background-color: rgb(255, 102, 102);</string>
-   </property>
-   <property name="text">
-    <string>end</string>
-   </property>
-  </widget>
   <zorder>label_4</zorder>
   <zorder>label</zorder>
   <zorder>bs2</zorder>
@@ -267,7 +242,6 @@
   <zorder>s1</zorder>
   <zorder>s3</zorder>
   <zorder>botton_start</zorder>
-  <zorder>botton_start_2</zorder>
  </widget>
  <resources>
   <include location="source.qrc"/>

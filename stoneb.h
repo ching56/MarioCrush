@@ -11,6 +11,7 @@ class stoneB : public stone
 public:
     stoneB(QWidget *parent,int type ,int row, int col);
     void crush();
+    ~stoneB();
 };
 
 #endif // STONEB_H

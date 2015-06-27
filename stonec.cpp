@@ -7,3 +7,9 @@ void stoneC::crush()
 {   qDebug()<<"colCrush";
     emit superCrush(1,row,col);
 }
+
+stoneC::~stoneC()
+{
+
+
+}

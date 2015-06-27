@@ -6,3 +6,8 @@ void stoneB::crush()
 {           qDebug()<<"bombCrsuh";
             emit superCrush(6,row,col);
 }
+
+stoneB::~stoneB()
+{
+
+}

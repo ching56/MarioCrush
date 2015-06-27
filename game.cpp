@@ -8,7 +8,7 @@
 game::game(QWidget *parent,result *res) :
     QWidget(parent),
     ui(new Ui::game),
-    score(0),times(60),move(0),starCrushType(0),res(res)
+    score(0),times(60),move(0),starCrushType(0),res(res),star(0)
 {
     srandom(time(NULL));
     ui->setupUi(this);
@@ -17,7 +17,6 @@ game::game(QWidget *parent,result *res) :
     timer2 = new QTimer(this);
     connect(timer2,SIGNAL(timeout()),this,SLOT(moveclock()));
     timer2->start(1000);
-
     ui->s1->hide();
     ui->s2->hide();
     ui->s3->hide();
@@ -460,9 +459,11 @@ void game::moveclock()
     times--;
     ui->lcdNumber_2->display(times);
     if(times == 0){
+        star = score/1000;
         res->getScore(score);
         res->show();
         delete timer2;
+        emit quit(star ,score);
     }
 }
 

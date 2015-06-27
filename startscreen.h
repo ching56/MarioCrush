@@ -17,7 +17,8 @@ class startscreen : public QMainWindow
 public:
     explicit startscreen(QMainWindow *parent = 0);
     ~startscreen();
-
+signals:
+        void quit(int star , int score);
 private slots:
 
     void on_botton_start_clicked();
