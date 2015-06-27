@@ -20,7 +20,7 @@ public:
 signals:
         void quit(int star , int score);
 private slots:
-
+    void reemit(int star, int score);
     void on_botton_start_clicked();
     void resetgame();
 

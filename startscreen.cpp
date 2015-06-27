@@ -7,12 +7,17 @@ startscreen::startscreen(QMainWindow *parent) :
     ui->setupUi(this);
     gamewindow = NULL;
     resultwindow = new result(this);
+    connect(resultwindow,SIGNAL(quit(int,int)),this,SLOT(reemit(int,int)));
 }
 
 startscreen::~startscreen()
 {
-    emit(gamewindow->star,gamewindow->score);
     delete ui;
+}
+
+void startscreen::reemit(int star, int score)
+{
+    emit quit(star,score);
 }
 
 
