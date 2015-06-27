@@ -23,7 +23,7 @@ public:
     explicit game(QWidget *parent,result *res);
     int star;
     ~game();
-        int score;
+    int score;
 signals:
     void quit(int star , int score);
 private:

@@ -13,6 +13,8 @@ void stone1::crush()
 {
     qDebug()<<"emit score";
     emit getPoint();
-    delete this;
+    qDebug()<<"before delete it";
+    this->~stone1();
+    qDebug()<<"delete it";
 }
 

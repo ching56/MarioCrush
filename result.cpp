@@ -11,7 +11,7 @@ QLabel& operator++(QLabel& l,int){
 }
 
 result::result(QWidget *parent) :
-    QDialog(parent),
+    QDialog(parent),parent(parent),score(0),
     ui(new Ui::result)
 {
     ui->setupUi(this);
@@ -26,8 +26,9 @@ result::~result()
     delete ui;
 }
 
-void result::getScore(int score)
+void result::getScore(int s)
 {
+    score = s;
     qDebug()<<"in result";
     if(score>1000){
         Text->setText("<span style=\" color:#ffffff;\">Try again</span>");
@@ -47,4 +48,13 @@ void result::getScore(int score)
 void result::on_botton_start_clicked()
 {
     emit reset();
+}
+
+void result::on_botton_start_2_clicked()
+{
+    qDebug()<<"in result end";
+    emit quit(score/1000,score);
+    qDebug()<<"emit in result"<<score/1000<<score;
+    parent->close();
+    this->close();
 }

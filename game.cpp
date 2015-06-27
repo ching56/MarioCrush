@@ -83,9 +83,6 @@ game::game(QWidget *parent,result *res) :
 
     for(int i=0;i<11;i++)
         for(int j=0;j<8;j++){
-            connect(st[j][i],SIGNAL(click()),this,SLOT(stone_clicked()));
-            connect(st[j][i],SIGNAL(superCrush(int ,int ,int )),this,SLOT(superCrush(int ,int ,int )));
-            connect(st[j][i],SIGNAL(getPoint()),this,SLOT(scorePlus()));
             for(int k=1;k<5;k++){
                 if(st[j][i]->button->text() == QString::number(k))
                     st[j][i]->button->setIcon(st1[k-1]);
@@ -371,8 +368,6 @@ bool game::checkCrush()
         for(int i=0;i<8;i++){
             if(makeList[i][j] != 0){
                     st[i][j] = genSpecial(makeList[i][j],listType[i][j],i,j);
-                    connect(st[i][j],SIGNAL(click()),this,SLOT(stone_clicked()));
-                    connect(st[i][j],SIGNAL(superCrush(int ,int ,int )),this,SLOT(superCrush(int,int ,int )));
                     qDebug()<<"genSpecial";
             }
         }
@@ -408,11 +403,6 @@ void game::fillRandStone()
         for(int i=0;i<8;i++)
             if(st[i][j]==NULL){
                 st[i][j] = randStone(i,j);
-                connect(st[i][j],SIGNAL(click()),this,SLOT(stone_clicked()));
-                connect(st[i][j],SIGNAL(superCrush(int ,int ,int )),this,SLOT(superCrush(int,int ,int )));
-                if(typeid(*st[i][j]).name() == typeid(stone1).name()){
-                    connect(st[i][j],SIGNAL(getPoint()),this,SLOT(scorePlus()));
-                }
             }
 }
 
@@ -425,6 +415,9 @@ stone *game::randStone(int row ,int col)
     ptr = new stone1(this,type,row,col);
     qDebug()<<"stone gen!";
     ptr->button->show();
+    connect(ptr,SIGNAL(getPoint()),this,SLOT(scorePlus()));
+    connect(ptr,SIGNAL(click()),this,SLOT(stone_clicked()));
+    connect(ptr,SIGNAL(superCrush(int ,int ,int )),this,SLOT(superCrush(int,int ,int )));
     return ptr;
 }
 
@@ -451,6 +444,8 @@ stone *game::genSpecial(int which,int type,int row, int col)
     }
     qDebug()<<"Specialstone gen";
     ptr->button->show();
+    connect(ptr,SIGNAL(click()),this,SLOT(stone_clicked()));
+    connect(ptr,SIGNAL(superCrush(int ,int ,int )),this,SLOT(superCrush(int,int ,int )));
     return ptr;
 }
 
@@ -480,10 +475,12 @@ void game::scorePlus()
         ui->s2->show();
     if(score>3000)
         ui->s3->show();
+    qDebug()<<"++finish";
 }
 
 void game::stone_clicked()
 {
+    qDebug()<<"clicked!";
     int rec_i[2]={0,0};
     int rec_j[2]={0,0};
     int boolCount = 0;
@@ -495,6 +492,7 @@ void game::stone_clicked()
                  boolCount++;
           }
         }
+    qDebug()<<"clicked 1";
     if(boolCount==1){
         for(int i=0;i<8;i++)
             for(int j=0;j<11;j++){
@@ -578,8 +576,10 @@ void game::superCrush(int type, int row, int col)
     if(type == 5 && starCrushType == 0)return;
     if(type == 0)return;
     qDebug()<<"superCrush!"<<type<<row<<col;
+    if(st[row][col] != NULL){
     delete st[row][col];
     st[row][col] = NULL;
+    }
     if(type == 1){
         //col crush
         for(int i=0;i<11;i++){
@@ -589,8 +589,8 @@ void game::superCrush(int type, int row, int col)
                st[row][i] = NULL;
 
             }
-            qDebug()<<"end colCrush loop";
         }
+        qDebug()<<"end colCrush loop";
     }else if(type == 2){
         //row crush
         for(int i=0;i<8;i++){
